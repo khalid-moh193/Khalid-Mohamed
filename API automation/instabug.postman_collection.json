@@ -1,0 +1,453 @@
+{
+	"info": {
+		"_postman_id": "205da5d8-df17-470a-aa97-f4af22339f25",
+		"name": "instabug",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "6381493"
+	},
+	"item": [
+		{
+			"name": "Categories",
+			"item": [
+				{
+					"name": "Get all Categories",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Verify the length of data array\r",
+									"pm.test(\"The length of data array is 5\", function () {\r",
+									"    var Category_Limit = parseInt(pm.collectionVariables.get(\"Category_Limit\"))\r",
+									"    pm.expect(jsonData.data.length).to.eql(Category_Limit);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Schema is valid\", function () {\r",
+									"  var schema = {\r",
+									"    type: \"object\",\r",
+									"    properties: {\r",
+									"      total: { type: \"number\" },\r",
+									"      limit: { type: \"number\" },\r",
+									"      skip: { type: \"number\" },\r",
+									"      data: {\r",
+									"        type: \"array\",\r",
+									"        items: {\r",
+									"          type: \"object\",\r",
+									"          properties: {\r",
+									"            id: { type: \"string\" },\r",
+									"            name: { type: \"string\" },\r",
+									"            createdAt: { type: \"string\" },\r",
+									"            updatedAt: { type: \"string\" },\r",
+									"            subCategories: {\r",
+									"              type: \"array\",\r",
+									"              items: {\r",
+									"                type: \"object\",\r",
+									"                properties: {\r",
+									"                  id: { type: \"string\" },\r",
+									"                  name: { type: \"string\" },\r",
+									"                  createdAt: { type: \"string\" },\r",
+									"                  updatedAt: { type: \"string\" },\r",
+									"                },\r",
+									"              },\r",
+									"            },\r",
+									"            categoryPath: {\r",
+									"              type: \"array\",\r",
+									"              items: {\r",
+									"                type: \"object\",\r",
+									"                properties: {\r",
+									"                  id: { type: \"string\" },\r",
+									"                  name: { type: \"string\" },\r",
+									"                  createdAt: { type: \"string\" },\r",
+									"                  updatedAt: { type: \"string\" },\r",
+									"                },\r",
+									"              },\r",
+									"            },\r",
+									"          },\r",
+									"        },\r",
+									"      },\r",
+									"    },\r",
+									"    required: [\"total\", \"limit\", \"skip\", \"data\"],\r",
+									"  };\r",
+									"\r",
+									"  var response = pm.response.json();\r",
+									"  pm.expect(tv4.validate(response, schema)).to.be.true;\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3030/categories?$limit={{Category_Limit}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3030",
+							"path": [
+								"categories"
+							],
+							"query": [
+								{
+									"key": "$limit",
+									"value": "{{Category_Limit}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Category Negative Scenario",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"pm.collectionVariables.set(\"Category_Name\" , jsonData.name);\r",
+									"\r",
+									"pm.collectionVariables.set(\"Category_ID\" , jsonData.id);\r",
+									"\r",
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"verify that the name is updated\", function () {\r",
+									"    pm.expect(jsonData.errors[0]).to.eql(\"should have required property 'id'\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"{{$randomProduct}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3030/categories",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3030",
+							"path": [
+								"categories"
+							]
+						},
+						"description": "Generated from cURL: curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' -d '{ \\ \r\n   \"name\": \"string\", \\ \r\n   \"type\": \"string\", \\ \r\n   \"price\": 0, \\ \r\n   \"shipping\": 0, \\ \r\n   \"upc\": \"string\", \\ \r\n   \"description\": \"string\", \\ \r\n   \"manufacturer\": \"string\", \\ \r\n   \"model\": \"string\", \\ \r\n   \"url\": \"string\", \\ \r\n   \"image\": \"string\" \\ \r\n }' 'http://localhost:3030/products'"
+					},
+					"response": []
+				},
+				{
+					"name": "Add Category",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"pm.collectionVariables.set(\"Category_ID\" , jsonData.id);\r",
+									"\r",
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"{{$randomProduct}}\",\r\n  \"id\": \"KM_{{$randomAlphaNumeric}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3030/categories",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3030",
+							"path": [
+								"categories"
+							]
+						},
+						"description": "Generated from cURL: curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' -d '{ \\ \r\n   \"name\": \"string\", \\ \r\n   \"type\": \"string\", \\ \r\n   \"price\": 0, \\ \r\n   \"shipping\": 0, \\ \r\n   \"upc\": \"string\", \\ \r\n   \"description\": \"string\", \\ \r\n   \"manufacturer\": \"string\", \\ \r\n   \"model\": \"string\", \\ \r\n   \"url\": \"string\", \\ \r\n   \"image\": \"string\" \\ \r\n }' 'http://localhost:3030/products'"
+					},
+					"response": []
+				},
+				{
+					"name": "edit Category",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"verify that the name is updated\", function () {\r",
+									"    pm.expect(jsonData.name).to.eql(\"updated category\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \r\n   \"name\": \"updated category\"\r\n }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3030/categories/{{Category_ID}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3030",
+							"path": [
+								"categories",
+								"{{Category_ID}}"
+							]
+						},
+						"description": "Generated from cURL: curl -X PATCH --header 'Content-Type: application/json' --header 'Accept: application/json' -d '{ \\ \r\n   \"name\": \"updated product\", \\ \r\n }' 'http://localhost:3030/products/9999680'"
+					},
+					"response": []
+				},
+				{
+					"name": "get category by ID after Edit",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"verify that the name is updated\", function () {\r",
+									"    pm.expect(jsonData.data[0].name).to.eql(\"updated category\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3030/categories?id={{Category_ID}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3030",
+							"path": [
+								"categories"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "{{Category_ID}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete Category",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3030/categories/{{Category_ID}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3030",
+							"path": [
+								"categories",
+								"{{Category_ID}}"
+							]
+						},
+						"description": "Generated from cURL: curl -X DELETE --header 'Accept: application/json' 'http://localhost:3030/products/9999680'\r\n"
+					},
+					"response": []
+				},
+				{
+					"name": "get Category by ID after delete",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"check category name\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.data).to.be.empty;\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3030/categories?id={{Category_ID}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3030",
+							"path": [
+								"categories"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "{{Category_ID}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "Category_Limit",
+			"value": "5",
+			"type": "string"
+		},
+		{
+			"key": "Category_ID",
+			"value": ""
+		}
+	]
+}
